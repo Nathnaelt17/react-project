@@ -1,18 +1,9 @@
-import Login from "./components/Login"  
-import Signup from "./components/Signup"     
-
+import { useState } from 'react'
+import './App.css'
 
 function App() {
-  
-  return (
-    <div className="App">
-      <Login/>
-  
-      <Signup/>
-      </div>
-  );
-  
+ 
   
 }
 
-export default App;
+export default App
