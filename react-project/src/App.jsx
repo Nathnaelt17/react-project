@@ -1,11 +1,17 @@
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./Login.jsx"
+import Signup from "./Signup.jsx"
 
 function App() {
  
 return (
   <div>
     <Login />
+    <Signup />
+
   </div>
+
+  
 )
   
 }

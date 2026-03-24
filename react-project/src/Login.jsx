@@ -9,6 +9,11 @@ function Login() {
       <br />
       <input type="submit" value="Login" />
     </form>
+
+     <p>
+        Don't have an account?{" "}
+        <Link to="/signup.jsx">Sign up</Link>
+      </p>
     </div>
   )
 }
