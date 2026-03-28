@@ -1,10 +1,24 @@
+import { FaRocket, FaSmile, FaCheckCircle } from "react-icons/fa";
 
 function LandingPage() {
-    return (
-        <div>
-            <h1>Welcome to the Landing Page</h1>
-            <p>This is the landing page of our application.</p>
+  const user = JSON.parse(localStorage.getItem("user")) || {};
+  const firstName = user.name ? user.name.split(" ")[0] : "Guest";
+
+  return (
+    <div className="landing-page">
+      <div className="landing-card">
+
+        <div className="landing-hero">
+          <h1>Welcome, {firstName}!</h1>
+          <p>
+            You have successfully signed in. Explore your dashboard, manage your profile, and enjoy the app.
+          </p>
         </div>
-    );
+
+       </div>
+    </div>
+  );
 }
+
+
 export default LandingPage;

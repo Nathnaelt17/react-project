@@ -18,7 +18,7 @@ function Login() {
             <label htmlFor="username">Username</label>
             <div className="input-row">
               <FaUserAlt className="input-icon" />
-              <input type="text" id="username" name="username" placeholder="Username, Email or Phone" />
+              <input type="text" id="username" name="username" required placeholder="Username, Email or Phone" />
             </div>
           </div>
 
@@ -26,7 +26,7 @@ function Login() {
             <label htmlFor="password">Password</label>
             <div className="input-row">
               <FaLock className="input-icon" />
-              <input type="password" id="password" name="password" placeholder="Password" />
+              <input type="password" id="password" name="password" requiered placeholder="Password" />
             </div>
           </div>
 
