@@ -1,22 +1,10 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
 
 
 function Login() {
-  const AuthApp = () => {
-  const [isLogin, setIsLogin] = useState(true);
 
   return (
-    <div>
-      {isLogin ? <Login /> : <Signup />}
-      <button onClick={() => setIsLogin(!isLogin)}>
-        {isLogin ? "Signup" : "Login"}
-      </button>
-    </div>
-  );
-};
-  return (
-    <div>   
+    <div className ="login">   
       <h1>Login</h1>
       <form>
       <input type="text" id="username" name="username" placeholder="Username, Email or Phone"/>
