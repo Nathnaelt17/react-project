@@ -1,12 +1,27 @@
+  import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserAlt, FaLock } from "react-icons/fa";
 
 function Login() {
   const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLogin = (e) => {
     e.preventDefault();
-    navigate("/landing-page");
+
+    const savedUser = localStorage.getItem("registeredUser");
+    const storedUser = savedUser ? JSON.parse(savedUser) : null;
+
+    const isDefaultUser = username === "admin" && password === "admin123";
+    const isRegisteredUser = storedUser && storedUser.username === username && storedUser.password === password;
+
+    if (isRegisteredUser || isDefaultUser) {
+      navigate("/landing-page");
+    } else {
+      setError("Invalid username or password.");
+    }
   };
 
   return (
@@ -18,7 +33,18 @@ function Login() {
             <label htmlFor="username">Username</label>
             <div className="input-row">
               <FaUserAlt className="input-icon" />
-              <input type="text" id="username" name="username" required placeholder="Username, Email or Phone" />
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={username}
+                onChange={(e) => {
+                  setUsername(e.target.value);
+                  if (error) setError("");
+                }}
+                required
+                placeholder="Username, Email or Phone"
+              />
             </div>
           </div>
 
@@ -26,9 +52,22 @@ function Login() {
             <label htmlFor="password">Password</label>
             <div className="input-row">
               <FaLock className="input-icon" />
-              <input type="password" id="password" name="password" requiered placeholder="Password" />
+              <input
+                type="password"
+                id="password"
+                name="password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (error) setError("");
+                }}
+                required
+                placeholder="Password"
+              />
             </div>
           </div>
+
+          {error && <p className="form-error">{error}</p>}
 
           <button type="submit">Login</button>
         </form>

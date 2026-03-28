@@ -14,6 +14,18 @@ function Signup() {
  
   const handleSignup = (e) => {
     e.preventDefault();
+
+    const registeredUser = {
+      name,
+      username,
+      email,
+      phone,
+      address,
+      dob,
+      password,
+    };
+
+    localStorage.setItem("registeredUser", JSON.stringify(registeredUser));
     navigate("/landing-page");
   };
 
