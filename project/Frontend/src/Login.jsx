@@ -13,11 +13,9 @@ function Login() {
 
     const savedUser = localStorage.getItem("registeredUser");
     const storedUser = savedUser ? JSON.parse(savedUser) : null;
-
-    const isDefaultUser = username === "admin" && password === "admin123";
     const isRegisteredUser = storedUser && storedUser.username === username && storedUser.password === password;
 
-    if (isRegisteredUser || isDefaultUser) {
+    if (isRegisteredUser) {
       navigate("/landing-page");
     } else {
       setError("Invalid username or password.");

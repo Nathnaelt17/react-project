@@ -11,9 +11,34 @@ function Signup() {
   const [address, setAddress] = useState("");
   const [dob, setDob] = useState("");
   const [password, setPassword] = useState("");
+  const [signupError, setSignupError] = useState("");
  
   const handleSignup = (e) => {
     e.preventDefault();
+
+    if (!name || !username || !email || !phone || !address || !dob || !password) {
+      setSignupError("Please fill in all fields.");
+      return;
+    }
+
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@(gmail\.com|yahoo\.com)$/;
+    const phonePattern = /^[0-9]{10}$/;
+    const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,}$/;
+
+    if (!emailPattern.test(email)) {
+      setSignupError("Email must be a valid gmail.com or yahoo.com address.");
+      return;
+    }
+
+    if (!phonePattern.test(phone)) {
+      setSignupError("Phone must be a 10-digit number.");
+      return;
+    }
+
+    if (!passwordPattern.test(password)) {
+      setSignupError("Password must be at least 8 chars and include uppercase, lowercase, number, and symbol.");
+      return;
+    }
 
     const registeredUser = {
       name,
@@ -33,7 +58,7 @@ function Signup() {
     <div className="signup">
       <div className="auth-card">
         <h1>Signup</h1>
-        <form onSubmit={handleSignup} className="auth-form">
+        <form noValidate onSubmit={handleSignup} className="auth-form">
           <div className="form-group">
             <label htmlFor="name">Full name</label>
             <div className="input-row">
@@ -90,6 +115,7 @@ function Signup() {
             </div>
           </div>
 
+          {signupError && <p className="form-error">{signupError}</p>}
           <button type="submit">Sign Up</button>
         </form>
       </div>
