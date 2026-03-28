@@ -1,35 +1,105 @@
+@import "tailwindcss";
+
 :root {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background: #eef2ff;
+  color: #0f172a;
+}
+
+html,
+body {
   margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
- background-color: brokenwhite;
+  min-height: 100%;
 }
-.login{
+
+.login,
+.signup {
+  min-height: 100vh;
+  display: flex;
   align-items: center;
-  display: flex;
-  flex-direction: column;
   justify-content: center;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-   height: 100vh;         
-  display: flex;
-  justify-content: center;
- 
- }
-
-.signup{
-   align-items: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-   height: 100vh;         
-  display: flex;
-  justify-content: center;
-  
+  padding: 2rem;
+  background: #eef2ff;
 }
 
-input{
-padding: 5px;
-margin: 5px; 
+.auth-card {
+  width: min(460px, 92vw);
+  background: #ffffff;
+  border-radius: 1.25rem;
+  padding: 2rem;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.16);
 }
+
+.auth-card h1 {
+  margin: 0 0 1.25rem;
+  font-size: 2rem;
+  text-align: center;
+  letter-spacing: -0.03em;
+}
+
+.auth-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-group {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.85rem;
+  padding: 0.9rem;
+  background: #f8fafc;
+}
+
+.input-icon {
+  color: #64748b;
+  min-width: 1.2rem;
+  min-height: 1.2rem;
+}
+
+.input-row input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  font: inherit;
+  color: #0f172a;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 0.95rem 1rem;
+  border: none;
+  border-radius: 999px;
+  background: #2563eb;
+  color: white;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  background: #1d4ed8;
+}
+
+.auth-footer {
+  margin-top: 1rem;
+  text-align: center;
+  color: #475569;
+  font-size: 0.95rem;
+}
+
+.auth-footer a {
+  color: #2563eb;
+  text-decoration: none;
+}
+
+
