@@ -13,7 +13,12 @@ function Login() {
 
     const savedUser = localStorage.getItem("registeredUser");
     const storedUser = savedUser ? JSON.parse(savedUser) : null;
-    const isRegisteredUser = storedUser && storedUser.username === username && storedUser.password === password;
+    const loginIdentifier = username.trim();
+    const isRegisteredUser = storedUser && storedUser.password === password && (
+      storedUser.username === loginIdentifier ||
+      storedUser.email === loginIdentifier ||
+      storedUser.phone === loginIdentifier
+    );
 
     if (isRegisteredUser) {
       navigate("/landing-page");
