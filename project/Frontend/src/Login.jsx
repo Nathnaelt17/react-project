@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserAlt, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
+import { supabase } from "./supabase-client";
 
 function Login() {
   const navigate = useNavigate();
@@ -9,23 +10,44 @@ function Login() {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
-    const savedUser = localStorage.getItem("registeredUser");
-    const storedUser = savedUser ? JSON.parse(savedUser) : null;
-    const loginIdentifier = username.trim();
-    const isRegisteredUser = storedUser && storedUser.password === password && (
-      storedUser.username === loginIdentifier ||
-      storedUser.email === loginIdentifier ||
-      storedUser.phone === loginIdentifier
-    );
+    try {
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: username.trim(),
+        password,
+      });
 
-    if (isRegisteredUser) {
-      localStorage.setItem("user", JSON.stringify(storedUser));
+      if (signInError) {
+        throw signInError;
+      }
+
+      const metadata = data.user?.user_metadata ?? {};
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, name, username, email, phone, address, dob")
+        .eq("id", data.user.id)
+        .single();
+
+      if (profileError && profileError.code !== "PGRST116") {
+        throw profileError;
+      }
+
+      const userProfile = {
+        id: data.user?.id,
+        name: profileData?.name ?? metadata.name ?? "",
+        username: profileData?.username ?? metadata.username ?? "",
+        email: profileData?.email ?? data.user?.email ?? username.trim(),
+        phone: profileData?.phone ?? metadata.phone ?? "",
+        address: profileData?.address ?? metadata.address ?? "",
+        dob: profileData?.dob ?? metadata.dob ?? "",
+      };
+
+      localStorage.setItem("user", JSON.stringify(userProfile));
       navigate("/landing-page");
-    } else {
-      setError("Invalid username or password.");
+    } catch (loginError) {
+      setError(loginError.message || "Invalid email or password.");
     }
   };
 
@@ -57,7 +79,7 @@ function Login() {
               htmlFor="username" 
               className="block text-[#004777] font-semibold text-sm uppercase tracking-wide"
             >
-              Username / Email / Phone
+              Email Address
             </label>
             <div className="relative">
               <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#FF7700] text-sm" />
@@ -71,7 +93,7 @@ function Login() {
                   if (error) setError("");
                 }}
                 required
-                placeholder="Enter your username, email or phone"
+                placeholder="Enter your email address"
                 className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FF7700] focus:outline-none focus:ring-4 focus:ring-[#FF7700]/10 transition-all duration-300 text-gray-700 placeholder-gray-400"
               />
             </div>

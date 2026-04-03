@@ -1,9 +1,54 @@
+import { useEffect, useState } from "react";
 import { FaRocket, FaSmile, FaCheckCircle, FaUserCircle, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaCalendarAlt, FaUserAlt } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "./supabase-client";
 
 function LandingPage() {
-  const savedUser = localStorage.getItem("user") || localStorage.getItem("registeredUser");
-  const user = savedUser ? JSON.parse(savedUser) : {};
+  const navigate = useNavigate();
+  const [user, setUser] = useState(() => {
+    const savedUser = localStorage.getItem("user");
+    return savedUser ? JSON.parse(savedUser) : {};
+  });
   const username = user.username || (user.name ? user.name.split(" ")[0] : "Guest");
+
+  useEffect(() => {
+    const loadUser = async () => {
+      const { data, error } = await supabase.auth.getUser();
+
+      if (error || !data.user) {
+        navigate("/login");
+        return;
+      }
+
+      const metadata = data.user.user_metadata ?? {};
+      const { data: profileData, error: profileError } = await supabase
+        .from("profiles")
+        .select("id, name, username, email, phone, address, dob, created_at")
+        .eq("id", data.user.id)
+        .single();
+
+      if (profileError && profileError.code !== "PGRST116") {
+        navigate("/login");
+        return;
+      }
+
+      const profile = {
+        id: data.user.id,
+        name: profileData?.name ?? metadata.name ?? "",
+        username: profileData?.username ?? metadata.username ?? "",
+        email: profileData?.email ?? data.user.email ?? "",
+        phone: profileData?.phone ?? metadata.phone ?? "",
+        address: profileData?.address ?? metadata.address ?? "",
+        dob: profileData?.dob ?? metadata.dob ?? "",
+        created_at: profileData?.created_at ?? "",
+      };
+
+      localStorage.setItem("user", JSON.stringify(profile));
+      setUser(profile);
+    };
+
+    loadUser();
+  }, [navigate]);
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-[#004777] to-[#A30000] relative overflow-hidden">
@@ -149,7 +194,7 @@ function LandingPage() {
                 <div>
                   <p className="text-gray-500 text-sm font-medium">Member Since</p>
                   <p className="text-2xl font-bold text-[#004777]">
-                    {user.dob ? new Date(user.dob).getFullYear() : "2024"}
+                    {user.created_at ? new Date(user.created_at).getFullYear() : "2024"}
                   </p>
                 </div>
               </div>

@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Link,useNavigate } from "react-router-dom";
 import { FaUserAlt, FaEnvelope, FaPhoneAlt, FaMapMarkerAlt, FaCalendarAlt, FaLock, FaEye, FaEyeSlash, FaArrowRight } from "react-icons/fa";
+import { supabase } from "./supabase-client";
 
 function Signup() {
   const navigate = useNavigate();
@@ -41,36 +42,45 @@ function Signup() {
       return;
     }
 
-    const registeredUser = {
+   try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          username,
+          phone,
+          address,
+          dob,
+        },
+      },
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    const userProfile = {
+      id: data.user?.id,
       name,
       username,
       email,
       phone,
       address,
       dob,
-      password,
     };
 
-   try {
-    const response = await fetch("http://localhost:5000/api/users", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(registeredUser),
-    });
+    localStorage.setItem("user", JSON.stringify(userProfile));
 
-    const data = await response.json();
-
-    if (!response.ok) {
-      throw new Error(data.message || "Signup failed");
+    if (!data.session) {
+      setSignupError("Signup successful. Check your email to confirm your account before logging in.");
+      return;
     }
 
-    const localUser = { name, username, email, phone, address, dob };
-    localStorage.setItem("user", JSON.stringify(localUser));
     navigate("/landing-page");
   } catch (error) {
-    setSignupError(error.message);
+    setSignupError(error.message || "Signup failed.");
   } 
   };
 
