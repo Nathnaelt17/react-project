@@ -5,6 +5,7 @@ import { supabase } from "./supabase-client";
 
 function LandingPage() {
   const navigate = useNavigate();
+  const [loadError, setLoadError] = useState("");
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : {};
@@ -16,6 +17,7 @@ function LandingPage() {
       const { data, error } = await supabase.auth.getUser();
 
       if (error || !data.user) {
+        localStorage.removeItem("user");
         navigate("/login");
         return;
       }
@@ -28,8 +30,7 @@ function LandingPage() {
         .single();
 
       if (profileError && profileError.code !== "PGRST116") {
-        navigate("/login");
-        return;
+        setLoadError("Signed in, but your profile could not be loaded from Supabase.");
       }
 
       const profile = {
@@ -93,6 +94,11 @@ function LandingPage() {
               </h2>
               
               <div className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6">
+                {loadError && (
+                  <div className="mb-6 rounded-xl border border-[#A30000]/20 bg-red-50 px-4 py-3 text-sm font-medium text-[#A30000]">
+                    {loadError}
+                  </div>
+                )}
                 {/* Profile Avatar and Basic Info */}
                 <div className="flex flex-col md:flex-row items-center gap-6 mb-8 pb-6 border-b border-gray-200">
                   <div className="relative">
@@ -214,7 +220,7 @@ function LandingPage() {
             {/* Footer */}
             <div className="bg-gray-50 px-8 py-6 border-t border-gray-200">
               <p className="text-center text-gray-500 text-sm">
-                © 2024 Your App Name. All rights reserved.
+                Copyright 2024 Your App Name. All rights reserved.
               </p>
             </div>
           </div>

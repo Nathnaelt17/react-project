@@ -61,6 +61,12 @@ function Signup() {
       throw error;
     }
 
+    if (!data.session) {
+      localStorage.removeItem("user");
+      setSignupError("Signup successful. Check your email to confirm your account before logging in.");
+      return;
+    }
+
     const userProfile = {
       id: data.user?.id,
       name,
@@ -72,11 +78,6 @@ function Signup() {
     };
 
     localStorage.setItem("user", JSON.stringify(userProfile));
-
-    if (!data.session) {
-      setSignupError("Signup successful. Check your email to confirm your account before logging in.");
-      return;
-    }
 
     navigate("/landing-page");
   } catch (error) {
