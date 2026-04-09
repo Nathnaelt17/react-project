@@ -14,10 +14,38 @@ function Login() {
     e.preventDefault();
 
     try {
-      const { data, error: signInError } = await supabase.auth.signInWithPassword({
-        email: username.trim(),
-        password,
-      });
+      const loginInput = username.trim();
+      let signInOptions = {};
+
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginInput);
+      const isPhone = /^[0-9]{10}$/.test(loginInput);
+
+      if (isEmail) {
+        signInOptions = { email: loginInput, password };
+      } else if (isPhone) {
+        signInOptions = { phone: loginInput, password };
+      } else {
+        // Query profile by username to get email or phone
+        const { data: profile, error: profileError } = await supabase
+          .from("profiles")
+          .select("email, phone")
+          .eq("username", loginInput)
+          .single();
+
+        if (profileError || !profile) {
+          throw new Error("Invalid login credentials.");
+        }
+
+        if (profile.email) {
+          signInOptions = { email: profile.email, password };
+        } else if (profile.phone) {
+          signInOptions = { phone: profile.phone, password };
+        } else {
+          throw new Error("Invalid login credentials.");
+        }
+      }
+
+      const { data, error: signInError } = await supabase.auth.signInWithPassword(signInOptions);
 
       if (signInError) {
         throw signInError;
@@ -47,7 +75,7 @@ function Login() {
       localStorage.setItem("user", JSON.stringify(userProfile));
       navigate("/landing-page");
     } catch (loginError) {
-      setError(loginError.message || "Invalid email or password.");
+      setError(loginError.message || "Invalid login credentials.");
     }
   };
 
@@ -79,7 +107,7 @@ function Login() {
               htmlFor="username" 
               className="block text-[#004777] font-semibold text-sm uppercase tracking-wide"
             >
-              Email Address
+              Email, Phone, or Username
             </label>
             <div className="relative">
               <FaUserAlt className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#FF7700] text-sm" />
@@ -93,7 +121,7 @@ function Login() {
                   if (error) setError("");
                 }}
                 required
-                placeholder="Enter your email address"
+                placeholder="Enter email, phone number, or username"
                 className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-[#FF7700] focus:outline-none focus:ring-4 focus:ring-[#FF7700]/10 transition-all duration-300 text-gray-700 placeholder-gray-400"
               />
             </div>
